@@ -1,0 +1,5 @@
+---
+elasticsearch_exporter_download_url: "https://github.com/prometheus-community/elasticsearch_exporter/releases/download/v{{elasticsearch_exporter_version}}/elasticsearch_exporter-{{elasticsearch_exporter_version}}.{{elasticsearch_exporter_platform}}.tar.gz"
+elasticsearch_exporter_download_dest: "/tmp"
+elasticsearch_exporter_install_path: "/opt/prometheus_elasticsearch_exporter"
+elasticsearch_exporter_log_path: "/var/log/elasticsarch_exporter"

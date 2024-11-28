@@ -1,0 +1,11 @@
+---
+- name: Add the elasticsearch exporter group
+  group:
+    name: "{{elasticsearch_exporter_group}}"
+    state: present
+
+- name: Add the elasticsearch exporter user
+  user:
+    name: "{{elasticsearch_exporter_user}}"
+    shell: /bin/false
+    group: "{{elasticsearch_exporter_group}}"

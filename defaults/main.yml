@@ -1,0 +1,11 @@
+---
+elasticsearch_exporter_user: prometheus
+elasticsearch_exporter_group: prometheus
+# for more options,
+elasticsearch_exporter_opts:
+  "es.uri": "http://localhost:9200"
+  "web.listen-address": ":9114"
+elasticsearch_exporter_start_on_boot: yes
+elasticsearch_exporter_version: "1.8.0"
+elasticsearch_exporter_svc_state: started
+elasticsearch_exporter_platform: "linux-amd64"

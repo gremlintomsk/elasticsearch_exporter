@@ -1,0 +1,16 @@
+[Unit]
+Description=Prometheus Exporter for ElasticSearch
+Documentation=https://github.com/justwatchcom/elasticsearch_exporter/README.md
+After=elasticsearch.service network.target
+Wants=elasticsearch.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart={{elasticsearch_exporter_install_path}}/elasticsearch_exporter
+EnvironmentFile=-/etc/default/elasticsearch_exporter
+User={{elasticsearch_exporter_user}}
+Group={{elasticsearch_exporter_group}}

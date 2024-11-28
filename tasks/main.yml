@@ -1,0 +1,16 @@
+---
+
+- name: Create dedicated Prometheus ElasticSearch Exporter user
+  include_tasks: user_creation.yml
+  tags:
+    - build
+
+- name: Install Prometheus ElasticSearch Exporter
+  include_tasks: build.yml
+  tags:
+    - build
+
+- name: Configure Prometheus ElasticSearch Exporter
+  include_tasks: configure.yml
+  tags:
+    - configure

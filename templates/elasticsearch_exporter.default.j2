@@ -1,0 +1,4 @@
+{% for key,value in elasticsearch_exporter_opts.items() %}
+{# convert options to env var names #}
+{{ key | upper | regex_replace('\-|\.', '_')}}={{ value }}
+{% endfor %}

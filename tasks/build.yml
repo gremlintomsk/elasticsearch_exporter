@@ -1,0 +1,84 @@
+---
+- name: Create Prometheus ElasticSearch Exporter directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+    mode: 0750
+  with_items:
+    - "{{ elasticsearch_exporter_install_path }}"
+    - "{{ elasticsearch_exporter_log_path }}"
+
+- name: stat downloaded exporter tar
+  stat:
+    path: "{{ elasticsearch_exporter_download_dest }}/{{ elasticsearch_exporter_download_url.split('/')[-1] }}"
+  register: download_tar
+
+- name: Download Prometheus ElasticSearch Exporter tarball
+  get_url:
+    url: "{{ elasticsearch_exporter_download_url }}"
+    dest: "{{ elasticsearch_exporter_download_dest }}/{{ elasticsearch_exporter_download_url.split('/')[-1] }}"
+  when: download_tar.stat.exists == False
+
+- name: Untar Prometheus ElasticSearch Exporter tarball
+  unarchive:
+    src: "{{ elasticsearch_exporter_download_dest }}/{{ elasticsearch_exporter_download_url.split('/')[-1] }}"
+    dest: "{{ elasticsearch_exporter_install_path }}"
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+    remote_src: True
+  when: download_tar.stat.exists == False
+
+- name: Find files for copy
+  find:
+    paths: "{{ elasticsearch_exporter_install_path }}/{{ elasticsearch_exporter_download_url.split('/')[-1].rsplit('.',2)[0] }}"
+    patterns:
+      - '*'
+    recurse: yes
+  register: output
+  when: download_tar.stat.exists == False
+
+- name: Move files
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ elasticsearch_exporter_install_path }}"
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+    remote_src: true
+  with_items:
+    - "{{ output.files }}"
+  when: download_tar.stat.exists == False
+
+- name: Ensure Prometheus ElasticSearch Exporter directory does not exist
+  file:
+    path: "{{ elasticsearch_exporter_install_path }}/{{ elasticsearch_exporter_download_url.split('/')[-1].rsplit('.',2)[0] }}"
+    state: absent
+  when: download_tar.stat.exists == False
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: "{{ elasticsearch_exporter_install_path }}/elasticsearch_exporter"
+    mode: '0755'
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: "{{ elasticsearch_exporter_install_path }}"
+    owner: "{{ elasticsearch_exporter_user }}"
+    group: "{{ elasticsearch_exporter_group }}"
+
+- name: Add elasticsearch_exporter default file
+  template:
+    src: "elasticsearch_exporter.default.j2"
+    dest: "/etc/default/elasticsearch_exporter"
+  notify: "restart exporter"
+
+- name: Add systemd service
+  template:
+    dest: /etc/systemd/system/elasticsearch-exporter.service
+    mode: 0644
+    src: elasticsearch_exporter.service.j2
+  notify: "restart exporter"

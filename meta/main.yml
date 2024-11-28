@@ -1,0 +1,18 @@
+---
+
+galaxy_info:
+  description: "Install and manage Prometheus ElasticSearch Exporter (justwatchcom/elasticsearch_exporter)"
+  license: MIT
+  role_name: elasticsearch_exporter
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+  categories:
+    - prometheus
+    - monitoring
+    - elasticsearch
+
+dependencies: []
